@@ -5,14 +5,15 @@ const Seat = () => {
 	} = useQuery({
 		queryKey: ["seat"],
 		queryFn: async () => {
-			const res = await fetch(`${process.env.REACT_APP_API}/seat`);
+			const res = await fetch(`https://seat-booking.vercel.app/seat`);
 			const data = await res.json();
 			return data;
 		},
 	});
+	console.log(data)
 	const handleClick = async (id,status) => { 
 
-		await fetch(`${process.env.REACT_APP_API}/process/${id}`, {
+		await fetch(`https://seat-booking.vercel.app/process/${id}`, {
 			method: "PUT",
 			headers: { "content-type": "application/json" },
 			body: JSON.stringify({status})
@@ -21,7 +22,7 @@ const Seat = () => {
 			.then(() => refetch());
 		 setTimeout(() => {
 			
-			 fetch(`${process.env.REACT_APP_API}/booked/${id}`, {
+			 fetch(`https://seat-booking.vercel.app/booked/${id}`, {
 					method: "PUT",
 					headers: { "content-type": "application/json" },
 					body: JSON.stringify({ status }),
