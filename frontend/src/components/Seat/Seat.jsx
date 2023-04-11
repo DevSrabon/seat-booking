@@ -1,8 +1,8 @@
 import { useQuery } from "react-query";
+import { TbArmchair } from "react-icons/tb";
+
 const Seat = () => {
-	const {
-		data = [], refetch
-	} = useQuery({
+	const { data = [], refetch } = useQuery({
 		queryKey: ["seat"],
 		queryFn: async () => {
 			const res = await fetch(`https://seat-booking.vercel.app/seat`);
@@ -10,42 +10,41 @@ const Seat = () => {
 			return data;
 		},
 	});
-	console.log(data)
-	const handleClick = async (id,status) => { 
 
+	const handleClick = async (id, status) => {
 		await fetch(`https://seat-booking.vercel.app/process/${id}`, {
 			method: "PUT",
 			headers: { "content-type": "application/json" },
-			body: JSON.stringify({status})
+			body: JSON.stringify({ status }),
 		})
 			.then((res) => res.json())
 			.then(() => refetch());
-		 setTimeout(() => {
-			
-			 fetch(`https://seat-booking.vercel.app/booked/${id}`, {
-					method: "PUT",
-					headers: { "content-type": "application/json" },
-					body: JSON.stringify({ status }),
-				})
-					.then((res) => res.json())
-					.then(() => refetch());
-		},1000)
-	}
-	
+		setTimeout(() => {
+			fetch(`https://seat-booking.vercel.app/booked/${id}`, {
+				method: "PUT",
+				headers: { "content-type": "application/json" },
+				body: JSON.stringify({ status }),
+			})
+				.then((res) => res.json())
+				.then(() => refetch());
+		}, 1000);
+	};
 	return (
 		<div>
-			<div className="grid grid-cols-4   w-56 mx-auto mt-56">
+			<div className="grid grid-cols-5  w-56 mx-auto mt-10">
 				{data?.map((item) => (
-					<div className="w-10 h-10" key={item._id}>
-						<div
-							onClick={() => handleClick(item._id,item.status)}
-							className={`${
-								item?.status === "process" ? "bg-[yellow]" : "bg-[green]"
-							} ${
-								item?.status === "booked" ? "bg-[red]" : "bg-[green]"
-							} h-6 w-5 rounded-tl-2xl rounded-tr-2xl  relative`}>
-							<div className="h-[10px] w-[19.5px] skew-x-12 left-[1.5px]  bg-neutral-400 absolute -bottom-[10px]"></div>
-						</div>
+					<div key={item._id}>
+						<TbArmchair
+							onClick={() => handleClick(item._id, item.status)}
+							size={54}
+							className={`${item.status === "process" && "fill-yellow-400"} ${
+								item.status === "booked" && "fill-[red]"
+							} fill-[green] ${
+								item.status === "empty" && "focus-within:fill-blue-400"
+							} `}
+							color={item.status !== "empty" ? "#730916" : "black"}
+							cursor={item.status !== "booked" && "pointer"}
+						/>
 					</div>
 				))}
 			</div>
